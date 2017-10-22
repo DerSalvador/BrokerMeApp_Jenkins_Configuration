@@ -1,0 +1,315 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>7</daysToKeep>
+        <numToKeep>7</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.28.0">
+      <projectUrl>https://github.com/DerSalvador/BrokerMeApp/</projectUrl>
+      <displayName></displayName>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.5.1">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <name>app</name>
+        <url>git@github.com:DerSalvador/BrokerMeApp.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/trunk</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions>
+      <hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
+        <relativeTargetDir>src</relativeTargetDir>
+      </hudson.plugins.git.extensions.impl.RelativeTargetDirectory>
+    </extensions>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.28.0">
+      <spec></spec>
+    </com.cloudbees.jenkins.GitHubPushTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <com.cloudbees.jenkins.GitHubSetCommitStatusBuilder plugin="github@1.28.0">
+      <statusMessage>
+        <content> starting building branch staging</content>
+      </statusMessage>
+      <contextSource class="org.jenkinsci.plugins.github.status.sources.DefaultCommitContextSource"/>
+    </com.cloudbees.jenkins.GitHubSetCommitStatusBuilder>
+    <hudson.tasks.Shell>
+      <command>cd src/app/src
+
+npm install
+
+npm test --verbose
+
+echo &quot;1.0.${BUILD_ID}-rc1&quot; &gt; ../tag_id.ctrl
+
+
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.plugins.git.GitPublisher plugin="git@3.5.1">
+      <configVersion>2</configVersion>
+      <pushMerge>false</pushMerge>
+      <pushOnlyIfSuccess>true</pushOnlyIfSuccess>
+      <forcePush>false</forcePush>
+      <tagsToPush>
+        <hudson.plugins.git.GitPublisher_-TagToPush>
+          <targetRepoName>app</targetRepoName>
+          <tagName>1.0.${BUILD_ID}-rc1</tagName>
+          <tagMessage></tagMessage>
+          <createTag>true</createTag>
+          <updateTag>true</updateTag>
+        </hudson.plugins.git.GitPublisher_-TagToPush>
+      </tagsToPush>
+    </hudson.plugins.git.GitPublisher>
+    <org.jenkinsci.plugins.gitchangelog.GitChangelogRecorder plugin="git-changelog@1.52">
+      <config>
+        <configFile>git-changelog-settings.json</configFile>
+        <createFileTemplateContent>&lt;h1&gt; Git Changelog changelog &lt;/h1&gt;
+
+&lt;p&gt;
+Changelog of Git Changelog.
+&lt;/p&gt;
+
+{{#tags}}
+&lt;h2&gt; {{name}} &lt;/h2&gt;
+ {{#issues}}
+  {{#hasIssue}}
+   {{#hasLink}}
+&lt;h2&gt; {{name}} &lt;a href=&quot;{{link}}&quot;&gt;{{issue}}&lt;/a&gt; {{title}} &lt;/h2&gt;
+   {{/hasLink}}
+   {{^hasLink}}
+&lt;h2&gt; {{name}} {{issue}} {{title}} &lt;/h2&gt;
+   {{/hasLink}}
+  {{/hasIssue}}
+  {{^hasIssue}}
+&lt;h2&gt; {{name}} &lt;/h2&gt;
+  {{/hasIssue}}
+
+
+   {{#commits}}
+&lt;a href=&quot;https://github.com/tomasbjerre/git-changelog-lib/commit/{{hash}}&quot;&gt;{{hash}}&lt;/a&gt; {{authorName}} &lt;i&gt;{{commitTime}}&lt;/i&gt;
+&lt;p&gt;
+&lt;h3&gt;{{{messageTitle}}}&lt;/h3&gt;
+
+{{#messageBodyItems}}
+ &lt;li&gt; {{.}}&lt;/li&gt; 
+{{/messageBodyItems}}
+&lt;/p&gt;
+  {{/commits}}
+
+ {{/issues}}
+{{/tags}}
+</createFileTemplateContent>
+        <createFileTemplateFile></createFileTemplateFile>
+        <createFileUseTemplateContent>true</createFileUseTemplateContent>
+        <createFileUseTemplateFile>false</createFileUseTemplateFile>
+        <customIssues>
+          <org.jenkinsci.plugins.gitchangelog.config.CustomIssue>
+            <link></link>
+            <name></name>
+            <pattern></pattern>
+            <title></title>
+          </org.jenkinsci.plugins.gitchangelog.config.CustomIssue>
+          <org.jenkinsci.plugins.gitchangelog.config.CustomIssue>
+            <link></link>
+            <name></name>
+            <pattern></pattern>
+            <title></title>
+          </org.jenkinsci.plugins.gitchangelog.config.CustomIssue>
+        </customIssues>
+        <dateFormat>YYYY-MM-dd HH:mm:ss</dateFormat>
+        <file>src/CHANGELOG.html</file>
+        <fromReference></fromReference>
+        <fromType>firstCommit</fromType>
+        <gitHubApi>https://api.github.com/repos/DerSalvador/BrokerMeApp</gitHubApi>
+        <gitHubIssuePattern>#([0-9]+)</gitHubIssuePattern>
+        <gitHubToken></gitHubToken>
+        <gitLabServer></gitLabServer>
+        <gitLabProjectName></gitLabProjectName>
+        <gitLabToken></gitLabToken>
+        <useGitLab>false</useGitLab>
+        <ignoreCommitsIfMessageMatches>^\[maven-release-plugin\].*|^\[Gradle Release Plugin\].*|^Merge.*</ignoreCommitsIfMessageMatches>
+        <ignoreCommitsWithoutIssue>false</ignoreCommitsWithoutIssue>
+        <ignoreTagsIfNameMatches></ignoreTagsIfNameMatches>
+        <jiraIssuePattern>\b[a-zA-Z]([a-zA-Z]+)-([0-9]+)\b</jiraIssuePattern>
+        <jiraPassword></jiraPassword>
+        <jiraServer></jiraServer>
+        <jiraUsername></jiraUsername>
+        <jiraUsernamePasswordCredentialsId></jiraUsernamePasswordCredentialsId>
+        <useJiraUsernamePasswordCredentialsId>false</useJiraUsernamePasswordCredentialsId>
+        <mediaWikiPassword></mediaWikiPassword>
+        <mediaWikiTemplateContent>__NOTOC__
+
+= Git Changelog changelog =
+Changelog of Git Changelog.
+
+{{#tags}}
+== {{name}} ==
+ {{#issues}}
+  {{#hasIssue}}
+   {{#hasLink}}
+=== {{name}} [{{link}} {{issue}}] {{title}} ===
+   {{/hasLink}}
+   {{^hasLink}}
+=== {{name}} {{issue}} {{title}} ===
+   {{/hasLink}}
+  {{/hasIssue}}
+  {{^hasIssue}}
+=== {{name}} ===
+  {{/hasIssue}}
+
+   {{#commits}}
+[https://github.com/tomasbjerre/git-changelog-lib/commit/{{hash}} {{hash}}] {{authorName}} {{commitTime}}
+
+&apos;&apos;&apos;{{{messageTitle}}}&apos;&apos;&apos;
+
+{{#messageBodyItems}}
+ * {{.}} 
+{{/messageBodyItems}}
+
+  {{/commits}}
+
+ {{/issues}}
+{{/tags}}
+</mediaWikiTemplateContent>
+        <mediaWikiTemplateFile></mediaWikiTemplateFile>
+        <mediaWikiTitle></mediaWikiTitle>
+        <mediaWikiUrl></mediaWikiUrl>
+        <mediaWikiUsername></mediaWikiUsername>
+        <mediaWikiUseTemplateContent>false</mediaWikiUseTemplateContent>
+        <mediaWikiUseTemplateFile>false</mediaWikiUseTemplateFile>
+        <noIssueName>No issue</noIssueName>
+        <readableTagName>/([^/]+?)$</readableTagName>
+        <showSummary>true</showSummary>
+        <showSummaryTemplateContent>&lt;h1&gt; Git Changelog changelog &lt;/h1&gt;
+
+&lt;p&gt;
+Changelog of Git Changelog.
+&lt;/p&gt;
+
+{{#tags}}
+&lt;h2&gt; {{name}} &lt;/h2&gt;
+ {{#issues}}
+  {{#hasIssue}}
+   {{#hasLink}}
+&lt;h2&gt; {{name}} &lt;a href=&quot;{{link}}&quot;&gt;{{issue}}&lt;/a&gt; {{title}} &lt;/h2&gt;
+   {{/hasLink}}
+   {{^hasLink}}
+&lt;h2&gt; {{name}} {{issue}} {{title}} &lt;/h2&gt;
+   {{/hasLink}}
+  {{/hasIssue}}
+  {{^hasIssue}}
+&lt;h2&gt; {{name}} &lt;/h2&gt;
+  {{/hasIssue}}
+
+
+   {{#commits}}
+&lt;a href=&quot;https://github.com/tomasbjerre/git-changelog-lib/commit/{{hash}}&quot;&gt;{{hash}}&lt;/a&gt; {{authorName}} &lt;i&gt;{{commitTime}}&lt;/i&gt;
+&lt;p&gt;
+&lt;h3&gt;{{{messageTitle}}}&lt;/h3&gt;
+
+{{#messageBodyItems}}
+ &lt;li&gt; {{.}}&lt;/li&gt; 
+{{/messageBodyItems}}
+&lt;/p&gt;
+
+
+  {{/commits}}
+
+ {{/issues}}
+{{/tags}}
+</showSummaryTemplateContent>
+        <showSummaryTemplateFile></showSummaryTemplateFile>
+        <showSummaryUseTemplateContent>true</showSummaryUseTemplateContent>
+        <showSummaryUseTemplateFile>false</showSummaryUseTemplateFile>
+        <subDirectory>src/</subDirectory>
+        <timeZone>UTC</timeZone>
+        <toReference>1.0.${BUILD_ID}-rc1</toReference>
+        <toType>ref</toType>
+        <untaggedName>Unreleased</untaggedName>
+        <useConfigFile>false</useConfigFile>
+        <useFile>true</useFile>
+        <useGitHub>true</useGitHub>
+        <useIgnoreTagsIfNameMatches>false</useIgnoreTagsIfNameMatches>
+        <useJira>false</useJira>
+        <useMediaWiki>false</useMediaWiki>
+        <useReadableTagName>false</useReadableTagName>
+        <useSubDirectory>true</useSubDirectory>
+        <gitHubApiTokenCredentialsId>3bb6c2b8-ca3d-45c5-8d6b-d58e7200a2c3</gitHubApiTokenCredentialsId>
+        <useGitHubApiTokenCredentials>true</useGitHubApiTokenCredentials>
+        <useGitLabApiTokenCredentials>false</useGitLabApiTokenCredentials>
+        <gitLabApiTokenCredentialsId></gitLabApiTokenCredentialsId>
+      </config>
+    </org.jenkinsci.plugins.gitchangelog.GitChangelogRecorder>
+    <htmlpublisher.HtmlPublisher plugin="htmlpublisher@1.14">
+      <reportTargets>
+        <htmlpublisher.HtmlPublisherTarget>
+          <reportName>CHANGELOG HTML Report</reportName>
+          <reportDir></reportDir>
+          <reportFiles>src/CHANGELOG.html</reportFiles>
+          <alwaysLinkToLastBuild>true</alwaysLinkToLastBuild>
+          <reportTitles></reportTitles>
+          <keepAll>false</keepAll>
+          <allowMissing>true</allowMissing>
+          <includes>**/*</includes>
+        </htmlpublisher.HtmlPublisherTarget>
+      </reportTargets>
+    </htmlpublisher.HtmlPublisher>
+    <org.jenkinsci.plugins.github.status.GitHubCommitStatusSetter plugin="github@1.28.0">
+      <commitShaSource class="org.jenkinsci.plugins.github.status.sources.BuildDataRevisionShaSource"/>
+      <reposSource class="org.jenkinsci.plugins.github.status.sources.AnyDefinedRepositorySource"/>
+      <contextSource class="org.jenkinsci.plugins.github.status.sources.DefaultCommitContextSource"/>
+      <statusResultSource class="org.jenkinsci.plugins.github.status.sources.ConditionalStatusResultSource">
+        <results>
+          <org.jenkinsci.plugins.github.status.sources.misc.BetterThanOrEqualBuildResult>
+            <state>SUCCESS</state>
+            <message></message>
+            <result>SUCCESS</result>
+          </org.jenkinsci.plugins.github.status.sources.misc.BetterThanOrEqualBuildResult>
+          <org.jenkinsci.plugins.github.status.sources.misc.BetterThanOrEqualBuildResult>
+            <state>PENDING</state>
+            <message>This build is unstable</message>
+            <result>UNSTABLE</result>
+          </org.jenkinsci.plugins.github.status.sources.misc.BetterThanOrEqualBuildResult>
+          <org.jenkinsci.plugins.github.status.sources.misc.BetterThanOrEqualBuildResult>
+            <state>FAILURE</state>
+            <message>This build failed</message>
+            <result>FAILURE</result>
+          </org.jenkinsci.plugins.github.status.sources.misc.BetterThanOrEqualBuildResult>
+        </results>
+      </statusResultSource>
+      <statusBackrefSource class="org.jenkinsci.plugins.github.status.sources.BuildRefBackrefSource"/>
+      <errorHandlers/>
+    </org.jenkinsci.plugins.github.status.GitHubCommitStatusSetter>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.34">
+      <deleteDirs>false</deleteDirs>
+      <cleanupParameter></cleanupParameter>
+      <externalDelete></externalDelete>
+    </hudson.plugins.ws__cleanup.PreBuildCleanup>
+  </buildWrappers>
+</project>

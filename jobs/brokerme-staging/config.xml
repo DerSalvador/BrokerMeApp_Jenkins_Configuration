@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<matrix-project plugin="matrix-project@1.11">
+  <actions/>
+  <description>This pipeline deploy brokerme to staging environment</description>
+  <displayName>BrokerMeApp Staging</displayName>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.28.0">
+      <projectUrl>https://github.com/DerSalvador/BrokerMeApp/</projectUrl>
+      <displayName>BrokerMeApp</displayName>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.5.1">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>git@github.com:DerSalvador/BrokerMeApp.git</url>
+        <credentialsId>MichaelPrivateKey</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <axes/>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>env</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command></command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers>
+    <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.34">
+      <deleteDirs>false</deleteDirs>
+      <cleanupParameter></cleanupParameter>
+      <externalDelete></externalDelete>
+    </hudson.plugins.ws__cleanup.PreBuildCleanup>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.8"/>
+  </buildWrappers>
+  <executionStrategy class="hudson.matrix.DefaultMatrixExecutionStrategyImpl">
+    <runSequentially>false</runSequentially>
+  </executionStrategy>
+</matrix-project>

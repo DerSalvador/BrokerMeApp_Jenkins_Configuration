@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <jenkins.triggers.ReverseBuildTrigger>
+      <spec></spec>
+      <upstreamProjects>docker-run-smoke-testing-trunk</upstreamProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+        <completeBuild>true</completeBuild>
+      </threshold>
+    </jenkins.triggers.ReverseBuildTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>docker run registry.brokerme.club:5000/brokerme/ansible:latest ansible-playbook /playbooks/deploy-docker-container.yml -f 2 -v --extra-vars &quot;hosts=tools user=root registry_host=registry.brokerme.club container_url=brokerme/app-staging registry_port=5000 tag=latest&quot;</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>

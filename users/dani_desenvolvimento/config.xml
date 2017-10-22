@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<user>
+  <fullName>dani_desenvolvimento</fullName>
+  <properties>
+    <jenkins.security.ApiTokenProperty>
+      <apiToken>{AQAAABAAAAAwl06VtbWZgNtRjGhZeL25WzUShfIw6g656LZbA5/oZnLv82Fe1AvrfUVUrNFPkrJ7B7h5pe/mc/zOIXtVfshx8Q==}</apiToken>
+    </jenkins.security.ApiTokenProperty>
+    <com.cloudbees.plugins.credentials.UserCredentialsProvider_-UserCredentialsProperty plugin="credentials@2.1.16">
+      <domainCredentialsMap class="hudson.util.CopyOnWriteMap$Hash"/>
+    </com.cloudbees.plugins.credentials.UserCredentialsProvider_-UserCredentialsProperty>
+    <hudson.plugins.emailext.watching.EmailExtWatchAction_-UserProperty plugin="email-ext@2.60">
+      <triggers/>
+    </hudson.plugins.emailext.watching.EmailExtWatchAction_-UserProperty>
+    <hudson.model.MyViewsProperty>
+      <views>
+        <hudson.model.AllView>
+          <owner class="hudson.model.MyViewsProperty" reference="../../.."/>
+          <name>all</name>
+          <filterExecutors>false</filterExecutors>
+          <filterQueue>false</filterQueue>
+          <properties class="hudson.model.View$PropertyList"/>
+        </hudson.model.AllView>
+      </views>
+    </hudson.model.MyViewsProperty>
+    <org.jenkinsci.plugins.displayurlapi.user.PreferredProviderUserProperty plugin="display-url-api@2.0">
+      <providerId>default</providerId>
+    </org.jenkinsci.plugins.displayurlapi.user.PreferredProviderUserProperty>
+    <hudson.model.PaneStatusProperties>
+      <collapsed/>
+    </hudson.model.PaneStatusProperties>
+    <hudson.search.UserSearchProperty>
+      <insensitiveSearch>false</insensitiveSearch>
+    </hudson.search.UserSearchProperty>
+    <hudson.tasks.Mailer_-UserProperty plugin="mailer@1.20">
+      <emailAddress>dani_desenvolvimento@yahoo.com.br</emailAddress>
+    </hudson.tasks.Mailer_-UserProperty>
+  </properties>
+</user>

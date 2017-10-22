@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <jenkins.triggers.ReverseBuildTrigger>
+      <spec></spec>
+      <upstreamProjects>build-app-trunk</upstreamProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+        <completeBuild>true</completeBuild>
+      </threshold>
+    </jenkins.triggers.ReverseBuildTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>cd ../
+cd build-app-trunk/src/app
+export TAG=`cat tag_id.ctrl`
+
+cd src/
+
+# Generate env
+
+rm env
+cat &gt;&gt; env &lt;&lt; EOF
+LINKEDIN_CLIENTID=78ru8qzace1b9l
+LINKEDIN_SECRET=tO7C4oEjh9xIVPa4
+GITHUB_CLIENTID=71a9614ad802988e34d5
+GITHUB_SECRET=fbf407e41241c17482dcd49d45569225c8e2bcc8
+PUSHER_APPID=327196
+PUSHER_KEY=e4db5d5b8b45e8b336be
+PUSHER_SECRET=c508e689cdb00b52f34d
+MONGO_DBNAME=freelancer
+MONGO_USER=freelancerappuser
+MONGO_PWD=Em2ytkCYhwpD7ckEB8GD
+S3_KEY=OICWIQK2N4QD2X4VD63J
+S3_SECRET=0DXivOOeFCiYxBlfIhBix2gG4h+eaY3T07mvVIwW6kI
+BROKER_PWD=R34U89b43
+BROKER_APIKEY=key-9d79dc89cc74817b7aec034137dea98e
+BROKER_VALIDATION_KEY=pubkey-ebbac0c3a100accbdf505a0db1c1c17f
+SERVER.COOKIE_SECRET=angular-app
+BUILD_RELEASE=$TAG
+EOF
+
+cat env</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>cd ../
+cd build-app-trunk/src/app
+export TAG=`cat tag_id.ctrl`
+cd src/
+
+# Generate config.js
+
+rm -f config.js
+cat &gt;&gt; config.js &lt;&lt; EOF
+module.exports = {
+    database: &quot;mongodb&quot;,
+    api: &quot;\/api\/v1\/&quot;,
+    port: &quot;4000&quot;,
+    mailer_port: &quot;4200&quot;,
+    robot_port: &quot;4300&quot;,
+    host: &quot;http://mongo_service&quot;,
+    webhost: &quot;http://192.241.160.163:3434&quot;,
+    staginghost: &quot;http://162.243.192.227&quot;,
+    mongohost: &quot;mongo_service&quot;,
+    s3debug: false,
+    cvspath: &quot;\/data\/apps\/cvs\/&quot;,
+    pusher: {
+ 
+        encrypted: true
+    },
+    view: {
+        port: 3434
+    },
+    landingpage: {
+        port: 3000,
+        emailport: 80,
+        address: &quot;http://staging.brokerme.club&quot;,
+        modal: &quot;/#/modal&quot;,
+        response: &quot;/#/&quot;
+    },
+    session_expiration_time: &quot;86400&quot;,
+    socket: {
+        port: &quot;3700&quot;
+    },
+    elastic: {
+        host: &quot;elasticsearch_service:9200&quot;,
+        log: &quot;trace&quot;
+    },
+    queue: {
+        //host: &quot;http://localhost&quot;,
+        host: &quot;http://brokerme_service&quot;,
+        port: &quot;5656&quot;
+    },
+    environment: {
+        offline: false,
+        debug: true,
+        offline_mockup_server: &quot;http://lamp-container\/&quot;
+    },
+    admins: [
+        &apos;claudio.fernando@gmail.com&apos;,
+        &apos;fernando@cfernandomaciel.com.br&apos;,
+        &apos;claudio.fernando.maciel@dersalvador.com&apos;,
+        &apos;filekeys@gmail.com&apos;,
+        &apos;michael.roepke@dersalvador.com&apos;,
+        &apos;robin.attinkara@filekeys.com&apos;,
+        &apos;michael.roepke@filekeys.com&apos;,
+        &apos;stieves.schmidt@groupoffice.ch&apos;,
+        &apos;postmaster@testjobs.filekeys.com&apos;,
+        &apos;contacts@brokerme.club&apos;,
+        &apos;robin.attinkara@gmail.com&apos;,
+        &apos;robin.attinkara@dersalvador.com&apos;
+    ],
+    upgrade: {
+        port: 2323
+    },
+    worker: {
+        stale_emails_interval: &quot;*/1 * * * *&quot;,
+        preindication_interval: &quot;*/15 * * * *&quot;,
+        indication_interval: &quot;*/15 * * * *&quot;,
+        no_contract_interval: &quot;*/1 * * * *&quot;,
+        offer_interval: &quot;*/1 * * * *&quot;,
+        junk_email_interval: &quot;*/1 * * * *&quot;,
+        pdfinterval: &quot;*/1 * * * *&quot;,
+        user_automatic_emails_interval: &quot;*/1 * * * *&quot;,
+        broker: &quot;testbroker@filekeys.com&quot;,
+        jobs: &quot;postmaster@testjobs.filekeys.com&quot;,
+        contracts: &quot;postmaster@contracts.filekeys.com&quot;,
+        freelancers: &quot;postmaster@freelancers.filekeys.com&quot;,
+        bot: &quot;postmaster@autobot.filekeys.com&quot;,
+        name: &quot;Brokerme.it Team&quot;,
+        jobsdomain: &quot;jobs.filekeys.com&quot;,
+        contractsdomain: &quot;contracts.filekeys.com&quot;,
+        freelancersdomain: &quot;freelancers.filekeys.com&quot;,
+        botdomain: &quot;autobot.filekeys.com&quot;
+    },
+    version: {
+    	build_release: &quot;$TAG&quot;
+    }
+};
+
+EOF
+
+cat config.js</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>cd ../
+cd build-app-trunk/src/app
+export TAG=`cat tag_id.ctrl`
+
+docker build --pull --force-rm --no-cache --compress -t registry.brokerme.club:5000/brokerme/app-trunk:$TAG -t registry.brokerme.club:5000/brokerme/app-trunk:latest -t brokerme/app-trunk:latest -t brokerme/app-trunk:$TAG .
+docker push registry.brokerme.club:5000/brokerme/app-trunk:latest
+docker push registry.brokerme.club:5000/brokerme/app-trunk:$TAG
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>

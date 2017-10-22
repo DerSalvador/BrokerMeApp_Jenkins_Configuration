@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <jenkins.triggers.ReverseBuildTrigger>
+      <spec></spec>
+      <upstreamProjects>build-docker-trunk</upstreamProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+        <completeBuild>true</completeBuild>
+      </threshold>
+    </jenkins.triggers.ReverseBuildTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>cd ../
+cd build-app-trunk/src/app
+
+export TAG_ID=`cat tag_id.ctrl`
+
+# Smoke Testing
+docker run registry.brokerme.club:5000/brokerme/app-trunk:$TAG_ID npm test --verbose</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>cd ../
+cd build-app-trunk/src/app
+
+export TAG_ID=`cat tag_id.ctrl`
+
+# Verify config files
+
+docker run registry.brokerme.club:5000/brokerme/app-trunk:$TAG_ID ls -ltra /src/
+
+docker run registry.brokerme.club:5000/brokerme/app-trunk:$TAG_ID cat /src/config.js
+
+docker run registry.brokerme.club:5000/brokerme/app-trunk:$TAG_ID cat /src/.env</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>
