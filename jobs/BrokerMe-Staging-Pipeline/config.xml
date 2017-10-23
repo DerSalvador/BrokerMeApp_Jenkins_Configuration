@@ -1,7 +1,114 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <flow-definition plugin="workflow-job@2.11.2">
+  <actions/>
+  <description></description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.40">
+    <script>package com.swisscom.abba.pipeline
+
+@Library(&apos;abba-shared-pipeline-library&apos;)
+import abba.pipeline.functions.AbbaPipelineFunctions
+
+node {
+
+    def abbaPipelineFunctions = new AbbaPipelineFunctions()
+
+    stage(&quot;Security Checks&quot;) {
+        abbaPipelineFunctions.securityCheckStep(&quot;${VDC_NAME}&quot;,&quot;${passphrase_production}&quot;)
+    }
+
+    abbaPipelineFunctions.sendFinalEmailNotifications(&quot;KICKSTARTER!&quot;)
+
+    sh &apos;env &gt; env.txt&apos;
+    readFile(&apos;env.txt&apos;).split(&quot;\r?\n&quot;).each {
+        println it
+    }
+
+    docker.withRegistry(&apos;https://localhost:445&apos;, &apos;docker-registry-login&apos;) {
+
+        abbaPipelineFunctions.setSystemProperties()
+
+        def workspace = pwd()
+
+        env.PATH = &quot;${workspace}/pipeline_scripts:${env.PATH}&quot;
+
+        def execScript = { cmds -&gt;
+            sh &quot;echo Running commands: ${cmds}&quot;
+            def tempfile = File.createTempFile(&quot;tmp&quot;, &quot;.sh&quot;)
+            tempfile.append cmds + &quot;\n&quot;
+            println &quot;Running script file &quot; + tempfile.absolutePath
+            println tempfile.readLines()
+            sh &quot;chmod 777 ${tempfile.absolutePath}&quot;
+            sh &quot;${tempfile.absolutePath}&quot;
+        }
+
+        def gitProjectList = [&apos;abba_jenkins&apos;, &apos;abba_infrastructure&apos;, &apos;pipeline_scripts&apos;]
+
+        def runPlaybook = { playbookname -&gt;
+            sh &quot;echo runPlaybook.sh ${playbookname}.yml ${VDC_NAME} ${workspace} ${AnsibleOPTS}&quot;
+            abbaPipelineFunctions.runPlaybook(&quot;${playbookname}&quot;,&quot;${VDC_NAME}&quot;,&quot;${workspace}&quot;,&quot;${AnsibleOPTS}&quot; )
+        }
+
+        def runPlaybookOnLocalhost = { playbookname -&gt;
+            sh &quot;echo runPlaybookOnLocalhost.sh ${playbookname}.yml ${VDC_NAME} ${workspace} ${AnsibleOPTS}&quot;
+            abbaPipelineFunctions.runPlaybookOnLocalhost(&quot;${playbookname}&quot;,&quot;${VDC_NAME}&quot;,&quot;${workspace}&quot;,&quot;${AnsibleOPTS}&quot; )
+        }
+
+
+        def showAvailablePlaybooks = { s -&gt; 
+            sh &quot;echo ------------------------------------------------------------&quot;
+            sh &quot;echo Availbale playbooks:&quot;
+            sh &quot;cd ${workspace}/abba_infrastructure/ansible; ls *.yml|xargs|sed &apos;s/.yml/,/g&apos;&quot;
+            sh &quot;echo ------------------------------------------------------------&quot;
+        }
+
+        step([$class: &apos;WsCleanup&apos;])
+        
+        dir(&quot;${workspace}&quot;) {
+           deleteDir()
+        }
+        
+        liste = &quot;${playbooknames}&quot;
+        playbooknames = Arrays.asList(liste.split(&quot;,&quot;))
+        
+        stage(&quot;ABBA CD Parameters:\nVDC_NAME=${VDC_NAME}\nabba_infrastructure=${abba_infrastructure}\npipeline_scripts=${pipeline_scripts}\nabba_jenkins_configuration=${abba_jenkins_configuration}\nAnsibleOPTS=${AnsibleOPTS}&quot;) {}
+
+        stage(&quot;Checking Out ABBA Repos&quot;) {
+            abbaPipelineFunctions.checkoutABBAGitRepos(&quot;${gitremote}&quot;,&quot;${gitbaseurl}&quot;,&quot;${credentialsid}&quot;,&quot;${abba_infrastructure}&quot;,&quot;${pipeline_scripts}&quot;,&quot;${abba_jenkins_configuration}&quot;)
+        }
+
+        stage(&quot;Running playbooks: ${playbooknames} &quot;) {
+            showAvailablePlaybooks()
+            boolean sshrun = false
+            for (playbookname in playbooknames) {
+                if (playbookname?.trim()) {
+                    if (!sshrun) {
+                        runPlaybook(&quot;bootstrap_ssh&quot;)
+                        sshrun = true
+                    }
+                    runPlaybook(playbookname)
+                }
+            }
+        }
+            
+        stage(&quot;Send Notifications&quot;) {
+            abbaPipelineFunctions.sendFinalEmailNotifications(&quot;FINISHER!&quot;)
+        }
+        
+        stage(&quot;Analyze Jenkins Console Log&quot;) {
+            abbaPipelineFunctions.analyzeJenkinsLogAndSetBuildStatus()
+        }
+
+   }    
+    
+}</script>
+    <sandbox>false</sandbox>
+  </definition>
   <triggers/>
   <disabled>false</disabled>
 </flow-definition>
