@@ -30,6 +30,9 @@
           </hudson.plugins.git.BranchSpec>
         </branches>
         <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+        <browser class="hudson.plugins.git.browser.GithubWeb">
+          <url>https://github.com/DerSalvador</url>
+        </browser>
         <submoduleCfg class="list"/>
         <extensions/>
       </hudson.plugins.git.GitSCM>
