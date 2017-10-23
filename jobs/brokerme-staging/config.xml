@@ -42,7 +42,7 @@
   <builders>
     <hudson.plugins.groovy.Groovy plugin="groovy@2.0">
       <scriptSource class="hudson.plugins.groovy.StringScriptSource">
-        <command></command>
+        <command>sh &apos;printenv&apos;</command>
       </scriptSource>
       <groovyName>(Default)</groovyName>
       <parameters></parameters>
