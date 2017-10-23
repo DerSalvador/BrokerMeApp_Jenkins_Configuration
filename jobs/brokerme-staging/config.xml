@@ -42,11 +42,10 @@
   <builders>
     <hudson.plugins.groovy.Groovy plugin="groovy@2.0">
       <scriptSource class="hudson.plugins.groovy.StringScriptSource">
-        <command> sh &apos;env &gt; env.txt&apos;
- String[] envs = readFile(&apos;env.txt&apos;).split(&quot;\r?\n&quot;)
-
-for(String vars: envs){
-    println(vars)
+        <command>envtext= &quot;printenv&quot;.execute().text
+envtext.split(&apos;\n&apos;).each
+{   envvar=it.split(&quot;=&quot;)
+    println envvar[0]+&quot; is &quot;+envvar[1]
 }</command>
       </scriptSource>
       <groovyName>(Default)</groovyName>
