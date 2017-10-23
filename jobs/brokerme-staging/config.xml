@@ -42,7 +42,12 @@
   <builders>
     <hudson.plugins.groovy.Groovy plugin="groovy@2.0">
       <scriptSource class="hudson.plugins.groovy.StringScriptSource">
-        <command>sh &apos;printenv&apos;</command>
+        <command> sh &apos;env &gt; env.txt&apos;
+ String[] envs = readFile(&apos;env.txt&apos;).split(&quot;\r?\n&quot;)
+
+for(String vars: envs){
+    println(vars)
+}</command>
       </scriptSource>
       <groovyName>(Default)</groovyName>
       <parameters></parameters>
