@@ -19,10 +19,6 @@
             <url>git@github.com:DerSalvador/BrokerMeAnsible.git</url>
             <credentialsId>MichaelPrivateKey</credentialsId>
           </hudson.plugins.git.UserRemoteConfig>
-          <hudson.plugins.git.UserRemoteConfig>
-            <url>git@github.com:DerSalvador/BrokerMeApp.git</url>
-            <credentialsId>MichaelPrivateKey</credentialsId>
-          </hudson.plugins.git.UserRemoteConfig>
         </userRemoteConfigs>
         <branches>
           <hudson.plugins.git.BranchSpec>
